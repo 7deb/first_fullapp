@@ -35,24 +35,23 @@ app.get("/todo", function (req, res) {
 app.put("/completed", async function (req, res) {
     const updatePayload = req.body;
     const parsedPayload = updateTodo.safeParse(updatePayload);
+
     if (!parsedPayload.success) {
-        console.log(parsedPayload)
+        console.log(parsedPayload.errors);
         res.status(403).json({
             message: "you sent the wrong input!!"
-        })
+        });
     } else {
-        await todo.update({
-            _id: req.body._id
-        }, {
-            completed: true
-        })
+        await todo.updateOne(
+            { _id: req.body._id },
+            { $set: { completed: true } }
+        );
 
         res.json({
             message: "Todo marked as completed!!"
-        })
+        });
     }
-
-})
+});
 app.listen(port,
     console.log(`your server is running in http://localhost:${port}`)
 )
